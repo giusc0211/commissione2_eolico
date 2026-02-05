@@ -1,0 +1,31 @@
+name: Build Windows Exe
+
+on: [push] # Si attiva ogni volta che carichi (push) del codice
+
+jobs:
+  build:
+    runs-on: windows-latest # Usa una macchina virtuale Windows
+
+    steps:
+    - name: Checkout del codice
+      uses: actions/checkout@v4
+
+    - name: Configura Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Installa dipendenze
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Crea l'eseguibile con PyInstaller
+      run: |
+        pyinstaller --onefile crea_scia3.py
+
+    - name: Carica l'eseguibile come Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: mio-programma-windows
+        path: dist/*.exe
